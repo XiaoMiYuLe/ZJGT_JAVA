@@ -1,29 +1,14 @@
 package com.pro.api;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import com.google.gson.Gson;
 import com.pro.action.ModelAction;
-import com.pro.action.v1.UserAction;
-import com.pro.model.Model;
-import com.pro.model.User;
-import com.pro.service.UserService;
 
 /**
  * Hello world!
@@ -45,12 +30,13 @@ public class Index extends HttpServlet {
 		String getV = req.getParameter("v") == null ? "1" : req.getParameter("v");
 		String[] reqURI = req.getRequestURI().split("/");
 		try {
-			// Class c = Class.forName("com.pro.action.v" + getV + "." + reqURI[2]);
-			Class getCLass = Class.forName("com.pro.action.v" + getV + "." + reqURI[2] + "Action");
+			// reqURI[2] 获取类名
+			Class<?> getCLass = Class.forName("com.pro.action.v" + getV + "." + reqURI[2] + "Action");
 			/* 以下调用带参的、私有构造函数 */
-			Constructor newClass = getCLass.getDeclaredConstructor(
+			Constructor<?> newClass = getCLass.getDeclaredConstructor(
 					new Class[] { HttpServletRequest.class, HttpServletResponse.class });
 			ModelAction ma = (ModelAction) newClass.newInstance(new Object[] { req, resp });
+			// reqURI[3] 获取方法名
 			ma.getClass().getMethod(reqURI[3]).invoke(ma);
 		} catch (NoSuchMethodException e) {
 			// TODO 自动生成的 catch 块
@@ -74,6 +60,7 @@ public class Index extends HttpServlet {
 			// TODO 自动生成的 catch 块
 			e.printStackTrace();
 		}
+		System.out.println("99999");
 
 		// UserAction ua = new UserAction(req, resp);
 		// ma.getUserList();

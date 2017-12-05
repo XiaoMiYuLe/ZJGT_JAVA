@@ -2,10 +2,7 @@ package com.pro.action;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,12 +30,14 @@ public class ModelAction {
 		LinkedHashMap<String, Object> result = new LinkedHashMap<String, Object>();
 		result.put("errorNo", errorNo);
 		result.put("errorMesg", errorMesg);
+		if(data == null) {
+			data = "";
+		}
 		result.put("data", data);
 		// 调用GSON jar工具包封装好的toJson方法，可直接生成JSON字符串
 		Gson gson = new Gson();
 		String json = gson.toJson(result);
 		// 输出到界面
-		System.out.println(json);
 		resp.setContentType("text/plain");
 		resp.setCharacterEncoding("utf-8");
 		PrintWriter out;
