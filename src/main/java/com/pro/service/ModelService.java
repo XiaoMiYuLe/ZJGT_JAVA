@@ -10,21 +10,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.sql.DataSource;
-
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 
 import com.pro.model.Model;
 
 public class ModelService extends JdbcDaoSupport {
-	protected DataSource dataSource;
 	protected JdbcTemplate jdbcTemplate;
 	protected String tableName = "model";
 	protected String className = "Model";
 	protected String pagekName = "com.pro.model";
-	protected HashMap<String, String> modelHm = new HashMap<String, String>();
+	protected HashMap<String, Object> modelHm = new HashMap<String, Object>();
 	protected HashMap<String, String[]> fieldsHm = null;
+	protected Model m = null;
 
 	protected String getClassName() {
 		return pagekName + "." + className;
@@ -42,15 +40,14 @@ public class ModelService extends JdbcDaoSupport {
 	}
 
 	public void modelHmInit() {
-		modelHm = null;
-		modelHm = new HashMap<String, String>();
+		modelHm = new HashMap<String, Object>();
 	}
 
-	public void setModelHm(String key, String value) {
+	public void setModelHm(String key, Object value) {
 		modelHm.put(key, value);
 	}
 
-	protected HashMap<String, String> getModelHm() {
+	protected HashMap<String, Object> getModelHm() {
 		return modelHm;
 	}
 
@@ -59,18 +56,19 @@ public class ModelService extends JdbcDaoSupport {
 	}
 
 	protected Model getClassModel() {
-		Model m = null;
-		try {
-			m = (Model) Class.forName(getClassName()).newInstance();
-		} catch (InstantiationException e) {
-			// TODO 自动生成的 catch 块
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO 自动生成的 catch 块
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO 自动生成的 catch 块
-			e.printStackTrace();
+		if (m == null) {
+			try {
+				m = (Model) Class.forName(getClassName()).newInstance();
+			} catch (InstantiationException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			} catch (ClassNotFoundException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			}
 		}
 		return m;
 	}
@@ -96,9 +94,9 @@ public class ModelService extends JdbcDaoSupport {
 	protected String getWhere() {
 		String whereStr = "";
 		if (modelHm != null) {
-			Iterator<Entry<String, String>> iter = modelHm.entrySet().iterator();
+			Iterator<Entry<String, Object>> iter = modelHm.entrySet().iterator();
 			while (iter.hasNext()) {
-				Entry<String, String> entry = iter.next();
+				Entry<String, Object> entry = iter.next();
 				if (whereStr != "") {
 					whereStr += " and ";
 				} else {
@@ -114,11 +112,11 @@ public class ModelService extends JdbcDaoSupport {
 		Object[] objs = null;
 		if (modelHm != null) {
 			objs = new Object[modelHm.size()];
-			Iterator<Entry<String, String>> iter = modelHm.entrySet().iterator();
+			Iterator<Entry<String, Object>> iter = modelHm.entrySet().iterator();
 			try {
 				int index = 0;
 				while (iter.hasNext()) {
-					Entry<String, String> entry = iter.next();
+					Entry<String, Object> entry = iter.next();
 					objs[index] = entry.getValue();
 					index++;
 				}
@@ -127,7 +125,6 @@ public class ModelService extends JdbcDaoSupport {
 				e.printStackTrace();
 			}
 		}
-		modelHmInit();
 		return objs;
 	}
 
@@ -232,11 +229,45 @@ public class ModelService extends JdbcDaoSupport {
 	}
 
 	public List<Map<String, Object>> getListMap(String sql, Object[] objs) {
-		return getJdbcTemplate().queryForList(sql, objs);
+		if (objs == null) {
+			return getJdbcTemplate().queryForList(sql);
+		} else {
+			return getJdbcTemplate().queryForList(sql, objs);
+		}
+	}
+
+	public List<Map<String, Object>> getListMap(String filedsString, int page, int pageSize) {
+		String sql = "SELECT " + getFiledsString(filedsString) + " FROM " + getTableName() + getWhere();
+		if (pageSize > 0) {
+			sql += " LIMIT " + page * pageSize + "," + pageSize;
+		}
+		Object[] getObj = getObjs();
+		return getListMap(sql, getObj);
+	}
+
+	public Map<String, Object> getListMapAndTotal(String sql, Object[] objs) {
+		HashMap<String, Object> getResult = new HashMap<String, Object>();
+		getResult.put("list", getJdbcTemplate().queryForList(sql, objs));
+		getResult.put("total", getTotals(objs));
+		return getResult;
+	}
+
+	public Map<String, Object> getListMapAndTotal(String filedsString, int page, int pageSize) {
+		String sql = "SELECT " + getFiledsString(filedsString) + " FROM " + getTableName() + getWhere();
+		if (pageSize > 0) {
+			sql += " LIMIT " + page * pageSize + "," + pageSize;
+		}
+		Object[] getObj = getObjs();
+		return getListMapAndTotal(sql, getObj);
 	}
 
 	public int getTotals(String sql, Object[] obj) {
 		return getJdbcTemplate().queryForObject(sql, obj, Integer.class);
+	}
+
+	public int getTotals(Object[] obj) {
+		String sql = "SELECT COUNT(*) FROM " + getTableName() + getWhere();
+		return getTotals(sql, obj);
 	}
 
 	public int getTotals() {
@@ -247,9 +278,9 @@ public class ModelService extends JdbcDaoSupport {
 
 	protected String[] getInsertStrings() {
 		String[] fieldsStr = new String[] { "", "" };
-		Iterator<Entry<String, String>> iter = modelHm.entrySet().iterator();
+		Iterator<Entry<String, Object>> iter = modelHm.entrySet().iterator();
 		while (iter.hasNext()) {
-			Entry<String, String> entry = iter.next();
+			Entry<String, Object> entry = iter.next();
 			if (fieldsStr[0] != "") {
 				fieldsStr[0] += ",";
 				fieldsStr[1] += ",";
@@ -293,15 +324,33 @@ public class ModelService extends JdbcDaoSupport {
 		return upResult;
 	}
 
-	/**
-	 * 实验3：批量插入
-	 */
-	public int[] insertList(String sql, List<Object[]> list) {
-		// String sql = "insert into employee ( emp_name,  salary ) values ( ?  ,  ? )";
-		// List<Object[]> list = new ArrayList<>();
-		// list.add(new Object[] { "张三", 1800 });
-		// list.add(new Object[] { "赵武", 1300 });
-		return jdbcTemplate.batchUpdate(sql, list);
+	public int insert(String sql, Object obj) {
+		Connection conn = null;
+		int upResult = 0;
+		try {
+			conn = jdbcTemplate.getDataSource().getConnection();
+			conn.setAutoCommit(false);
+			upResult = getJdbcTemplate().update(sql, obj);
+			conn.commit();
+		} catch (SQLException e) {
+			// TODO 自动生成的 catch 块
+			e.printStackTrace();
+			try {
+				conn.rollback();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+		} finally {
+			try {
+				conn.setAutoCommit(true);
+				if (conn != null) {
+					conn.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return upResult;
 	}
 
 }

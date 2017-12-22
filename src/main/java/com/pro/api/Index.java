@@ -1,6 +1,5 @@
 package com.pro.api;
 
-import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
@@ -29,90 +28,44 @@ public class Index extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		String getV = req.getParameter("v") == null ? "1" : req.getParameter("v");
 		String[] reqURI = req.getRequestURI().split("/");
-		try {
-			// reqURI[2] 获取类名
-			Class<?> getCLass = Class.forName("com.pro.action.v" + getV + "." + reqURI[2] + "Action");
-			/* 以下调用带参的、私有构造函数 */
-			Constructor<?> newClass = getCLass.getDeclaredConstructor(
-					new Class[] { HttpServletRequest.class, HttpServletResponse.class });
-			ModelAction ma = (ModelAction) newClass.newInstance(new Object[] { req, resp });
-			// reqURI[3] 获取方法名
-			ma.getClass().getMethod(reqURI[3]).invoke(ma);
-		} catch (NoSuchMethodException e) {
-			// TODO 自动生成的 catch 块
-			e.printStackTrace();
-		} catch (SecurityException e) {
-			// TODO 自动生成的 catch 块
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO 自动生成的 catch 块
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			// TODO 自动生成的 catch 块
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO 自动生成的 catch 块
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			// TODO 自动生成的 catch 块
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			// TODO 自动生成的 catch 块
-			e.printStackTrace();
+		if (reqURI.length >= 3) {
+			try {
+				// reqURI[2] 获取类名
+				Class<?> getCLass = Class
+						.forName("com.pro.action.v" + getV + "." + reqURI[2] + "Action");
+				/* 以下调用带参的、私有构造函数 */
+				Constructor<?> newClass = getCLass.getDeclaredConstructor(
+						new Class[] { HttpServletRequest.class, HttpServletResponse.class });
+				ModelAction ma = (ModelAction) newClass.newInstance(new Object[] { req, resp });
+				// reqURI[3] 获取方法名
+				ma.getClass().getMethod(reqURI[3]).invoke(ma);
+			} catch (NoSuchMethodException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			} catch (SecurityException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			} catch (ClassNotFoundException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			} catch (InstantiationException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			} catch (IllegalArgumentException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			}
 		}
-		System.out.println("99999");
-
-		// UserAction ua = new UserAction(req, resp);
-		// ma.getUserList();
-		// @SuppressWarnings("resource")
-		// ApplicationContext context = new
-		// ClassPathXmlApplicationContext("applicationContext.xml");
-		// UserService userS = (UserService) context.getBean("userService");
-		// // 添加查询条件
-		// userS.setModelHm("id", "2");
-		// User getUser = (User) userS.getOne("user_name");
-		// if (getUser != null) {
-		// System.out.println(getUser.getUserName());
-		// }
-		//
-		// userS.setModelHm("id", "5");
-		// List<Model> getModels = userS.getList("user_name,password", 0, 2);
-		// for (Model getMOne : getModels) {
-		// getUser = (User) getMOne;
-		// System.out.println(getUser.getUserName());
-		// }
-		// System.out.println(userS.getTotals());
-		//
-		// Object[] obj = new Object[] { "%e%" };
-		// List<Model> getModels2 = userS.getList("SELECT id,user_name,password FROM
-		// user WHERE user_name like ? ",
-		// "user_name,password", obj);
-		// for (Model getMOne : getModels2) {
-		// getUser = (User) getMOne;
-		// System.out.println(getUser.getUserName());
-		// }
-		//
-		//
-		// String getV = req.getParameter("v") == null ? "1" : req.getParameter("v");
-		// System.out.println(req.getQueryString());
-		// System.out.println(getV);
-
-		// try {
-		// req.getRequestDispatcher("/servlet/HomeServler") .forward(req, resp);
-		// } catch (ServletException e) {
-		// // TODO 自动生成的 catch 块
-		// e.printStackTrace();
-		// }
-		// userS.setModelHm("user_name", "ergergeref");
-		// userS.setModelHm("password", "84684481");
-		// userS.setModelHm("age", "6698");
-		// userS.insert();
-		//
-		// System.out.println(userS.getTotals(null));
-
+		System.out.println("end");
 	}
 
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
 		doGet(req, resp);
 	}
 }

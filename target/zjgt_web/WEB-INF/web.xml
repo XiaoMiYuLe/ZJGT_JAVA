@@ -3,17 +3,17 @@
 	xmlns="http://java.sun.com/xml/ns/javaee"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
 	id="WebApp_ID" version="3.0">
-	<display-name>JsonTest</display-name>
+	<display-name>ZJGT_API</display-name>
 	<welcome-file-list>
 		<welcome-file>index.jsp</welcome-file>
 	</welcome-file-list>
 
 	<servlet>
-		<servlet-name>JsonServlet</servlet-name>
+		<servlet-name>IndexMain</servlet-name>
 		<servlet-class>com.pro.api.Index</servlet-class>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name>JsonServlet</servlet-name>
+		<servlet-name>IndexMain</servlet-name>
 		<url-pattern>/*</url-pattern>
 	</servlet-mapping>
 </web-app>

@@ -15,8 +15,8 @@ import com.google.gson.Gson;
 public class ModelAction {
 	protected HttpServletRequest req;
 	protected HttpServletResponse resp;
-	protected ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
-
+	protected static final ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
+			
 	ModelAction() {
 
 	}
