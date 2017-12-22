@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletResponse;
 import com.pro.action.ModelAction;
 
 /**
- * Hello world!
  *
  */
 public class Index extends HttpServlet {

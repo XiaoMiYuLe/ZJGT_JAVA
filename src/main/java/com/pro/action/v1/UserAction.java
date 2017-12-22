@@ -20,7 +20,7 @@ public class UserAction extends ModelAction {
 				: Integer.parseInt(req.getParameter("pageSize"));
 //		userS.setModelHm("id", 5);
 		Map<String, Object> getListMapAndTotal = userS
-				.getListMapAndTotal("id,user_name,password", page , pageSize);		
+				.getListMapAndTotal("id,user_name,password", page , pageSize);
 		showResult(0, "", getListMapAndTotal);
 	}
 

@@ -16,7 +16,7 @@ public class ModelAction {
 	protected HttpServletRequest req;
 	protected HttpServletResponse resp;
 	protected static final ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
-			
+
 	ModelAction() {
 
 	}

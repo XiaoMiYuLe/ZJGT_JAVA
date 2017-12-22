@@ -1,6 +1,6 @@
 package com.pro.model;
 
-public class User implements Model {
+public class User  implements Model{
 	private int id;
 	private String userName;
 	private String password;
